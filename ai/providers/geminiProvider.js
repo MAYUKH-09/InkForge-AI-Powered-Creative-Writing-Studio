@@ -42,13 +42,14 @@ class GeminiProvider extends BaseProvider {
     const temperature = options.temperature ?? 0.8;
     const maxOutputTokens = options.maxTokens ?? 1000;
 
-    let retries = 3;
-    let delay = 1000;
+    let retries = 7;
+    let delay = 1500;
+    let currentModel = this._model;
 
     while (retries > 0) {
       try {
         const response = await client.models.generateContent({
-          model: this._model,
+          model: currentModel,
           contents: userPrompt,
           config: {
             systemInstruction: systemPrompt,
@@ -59,17 +60,50 @@ class GeminiProvider extends BaseProvider {
 
         return {
           content: response.text,
-          model: this._model,
+          model: currentModel,
           tokens: response.usageMetadata?.totalTokenCount || 0,
         };
       } catch (error) {
-        if (error.message && (error.message.includes('503') || error.message.includes('UNAVAILABLE'))) {
+        const isQuotaError = error.message && error.message.includes('429');
+        const isLimitZero = isQuotaError && error.message.includes('limit: 0');
+        
+        const isRetryableError = !isLimitZero && error.message && (
+          error.message.includes('503') || 
+          error.message.includes('UNAVAILABLE') || 
+          isQuotaError || 
+          error.message.includes('ResourceExhausted')
+        );
+
+        if (isRetryableError) {
           retries--;
-          if (retries === 0) throw error;
-          console.warn(`[GeminiProvider] 503 High Demand Error. Retrying in ${delay}ms... (${retries} retries left)`);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          delay *= 2;
+          console.warn(`[GeminiProvider] Warning with ${currentModel} at ${delay}ms... (${retries} retries left) - ${error.message.split('\\n')[0].substring(0, 80)}`);
+          
+          if (retries === 0) {
+             throw error; 
+          }
+
+          if (retries === 4 && currentModel === 'gemini-2.5-flash') {
+            console.warn(`[GeminiProvider] Falling back to gemini-2.0-flash due to sustained issues.`);
+            currentModel = 'gemini-2.0-flash';
+          } else if (retries === 2 && currentModel === 'gemini-2.0-flash') {
+            console.warn(`[GeminiProvider] Falling back to gemini-2.5-flash-lite due to sustained issues.`);
+            currentModel = 'gemini-2.5-flash-lite';
+          }
+
+          if (retries > 0) {
+             await new Promise(resolve => setTimeout(resolve, delay));
+             delay = Math.min(delay * 1.5, 10000); // Backoff, max 10s
+          }
         } else {
+          // If we hit a limit:0 or other non-retryable error on the first/second attempt,
+          // try to immediately fallback if we haven't reached the lite model yet
+          if (isLimitZero && currentModel !== 'gemini-2.5-flash-lite') {
+             console.warn(`[GeminiProvider] Hit limit 0 on ${currentModel}, instantly falling back.`);
+             if (currentModel === 'gemini-2.5-flash') currentModel = 'gemini-2.0-flash';
+             else if (currentModel === 'gemini-2.0-flash') currentModel = 'gemini-2.5-flash-lite';
+             retries--;
+             continue; // Immediately try the next model without sleeping
+          }
           throw error;
         }
       }

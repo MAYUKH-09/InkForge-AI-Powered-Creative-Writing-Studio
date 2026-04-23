@@ -17,6 +17,8 @@ const schemas = {
       style: { type: 'string', enum: ['formal', 'casual', 'fantasy', 'academic', 'journalistic', 'poetic', 'technical', 'humorous'] },
       characters: { type: 'string', maxLength: 500 },
       keywords: { type: 'string', maxLength: 500 },
+      wordLimit: { type: 'string', maxLength: 50 },
+      targetAudience: { type: 'string', maxLength: 50 },
     },
   },
 

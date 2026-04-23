@@ -31,7 +31,9 @@ function buildGenerationPrompt({ idea, genre, tone, characters, keywords, style,
   if (genre) sections.push(`**Genre:** ${genre}`);
   if (characters) sections.push(`**Characters:** ${characters}`);
   if (keywords) sections.push(`**Key Themes/Keywords:** ${keywords}`);
-  if (wordLimit) sections.push(`**Word Limit:** Approximately ${wordLimit} words`);
+  if (wordLimit) {
+    sections.push(`**Word Limit Constraint:** EXACTLY ${wordLimit} words. IMPORTANT: You must write a complete response that strictly satisfies this word limit. Adjust your pacing to conclude naturally shortly before reaching this limit.`);
+  }
   if (targetAudience) sections.push(`**Target Audience:** ${targetAudience}`);
 
   sections.push('', `**Writing Style:** ${styleDesc}`);

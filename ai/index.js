@@ -106,8 +106,8 @@ async function generate(params) {
   } else {
     // Determine maxTokens based on user word limit request to generate faster results
     const requestedWords = params.wordLimit ? parseInt(params.wordLimit, 10) : 500;
-    // ~1.5 tokens per word + 200 buffer
-    const maxTokens = Math.min(Math.ceil(requestedWords * 1.5) + 200, 4000);
+    // ~2.5 tokens per word + 500 buffer to prevent hard cutoffs
+    const maxTokens = Math.min(Math.ceil(requestedWords * 2.5) + 500, 8000);
 
     result = await provider.generate(
       SYSTEM_PROMPTS.generation,
@@ -153,8 +153,8 @@ async function refine(content, instructions) {
     const prompt = buildRefinementPrompt(content, instructions);
     // Estimate tokens needed based on input word count to process faster
     const wordCount = content.split(/\s+/).length;
-    // Buffer for expansion during refinement
-    const maxTokens = Math.min(Math.ceil(wordCount * 2.0) + 300, 4000);
+    // Massive buffer for expansion during refinement
+    const maxTokens = Math.min(Math.ceil(wordCount * 2.5) + 600, 8000);
 
     result = await provider.generate(
       SYSTEM_PROMPTS.refinement,

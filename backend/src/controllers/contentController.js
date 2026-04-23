@@ -12,11 +12,11 @@ const logger = require('../utils/logger');
  */
 async function generateContent(req, res, next) {
   try {
-    const { idea, genre, tone, characters, keywords, style, contentType } = req.body;
+    const { idea, genre, tone, characters, keywords, style, contentType, wordLimit, targetAudience } = req.body;
 
     logger.info(
       `[${req.id}] Generating ${contentType || 'story'}`,
-      `| Style: ${style || 'formal'} | Tone: ${tone || 'professional'}`
+      `| Style: ${style || 'formal'} | Tone: ${tone || 'professional'} | Limit: ${wordLimit || 'none'}`
     );
 
     const result = await ai.generate({
@@ -27,6 +27,8 @@ async function generateContent(req, res, next) {
       keywords,
       style,
       contentType,
+      wordLimit,
+      targetAudience,
     });
 
     logger.success(
