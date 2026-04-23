@@ -23,7 +23,10 @@ export default function Header() {
         </div>
       </div>
       <div className="header-actions">
-        <div className={`mode-indicator ${mode}`}>
+        <div 
+          className={`mode-indicator ${mode}`}
+          title={mode === 'demo' ? 'Running in fallback mode. Add GEMINI_API_KEY to environment variables for full AI power.' : ''}
+        >
           <span className="mode-dot"></span>
           {mode === 'gemini' ? 'Gemini Connected' : mode === 'demo' ? 'Demo Engine Active' : 'Backend Offline'}
         </div>

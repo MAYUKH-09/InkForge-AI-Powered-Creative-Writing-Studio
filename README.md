@@ -21,57 +21,32 @@ A full-stack web application that empowers users to **generate**, **refine**, **
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Deployment (GitHub & Vercel)
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) v18 or later
-- npm (comes with Node.js)
+If you have exported this code to GitHub and deployed it on Vercel, you must manually configure your API key for it to work:
 
-### 1. Clone / Navigate to the project
-```bash
-cd "Creative Writing 2"
-```
+1.  **Vercel Dashboard**: Go to your project settings -> **Environment Variables**.
+2.  **Add Key**: Add a new variable:
+    *   **Name**: `GEMINI_API_KEY`
+    *   **Value**: Your actual Google AI Studio API Key.
+3.  **Redeploy**: Go to the **Deployments** tab and redeploy your latest commit.
 
-### 2. Start the Backend
-```bash
-cd backend
-npm install
-npm start
-```
-The backend starts on **http://localhost:3001** in **Demo Engine mode** (no API key needed).
-
-### 3. Start the Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-The frontend starts on **http://localhost:5173**.
-
-### 4. Open the App
-Navigate to **http://localhost:5173** in your browser.
+### Why is this needed?
+- **Security**: API keys are intentionally kept private. When you export to GitHub, we do not include your keys for safety.
+- **AI Engine Detection**: The app looks for `GEMINI_API_KEY` in the environment. If it's missing, it automatically falls back to the **Demo Engine** to prevent a crash.
+- **Demo Mode**: If you see "Demo Engine Active" on your website, it means the key is missing or invalid in your Vercel settings.
 
 ---
 
-## 🤖 AI Modes
+## 🤖 AI Modes (Updated)
 
-### Demo Engine (Default)
-The app works **immediately out of the box** with a sophisticated built-in content generation engine. No API key required. It uses:
-- Rich vocabulary banks
-- Structural templates for each content type
-- Randomized parameters for unique content each time
+### Gemini AI Mode (Production)
+The preferred mode. Uses `gemini-flash-latest` for high-quality, creative content that strictly follows your ideas, word counts, and instructions.
 
-### OpenAI GPT Mode
-To use OpenAI's GPT models for higher quality generation:
-
-1. Copy `.env.example` to `.env` in the `backend/` folder
-2. Add your OpenAI API key:
-   ```
-   OPENAI_API_KEY=sk-your-key-here
-   ```
-3. Restart the backend server
-
-The app automatically detects the API key and switches modes.
+### Demo Engine (Fallback)
+A sophisticated built-in generator that works without an API key. 
+- **Improved Relevance**: I have recently updated the Demo Engine to intelligently weave your "Idea" into every generated piece (Story, Essay, Poem, etc.).
+- **Dynamic Templates**: Even if your API key is missing, the fallback content will now reflect your input instead of generic templates.
 
 ---
 
