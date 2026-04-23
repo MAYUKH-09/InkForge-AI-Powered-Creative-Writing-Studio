@@ -1,0 +1,9 @@
+{
+  "name": "inkforge-ai",
+  "version": "1.0.0",
+  "description": "InkForge AI Layer — Content generation, prompt building, and optimization",
+  "main": "index.js",
+  "dependencies": {
+    "openai": "^4.67.0"
+  }
+}
