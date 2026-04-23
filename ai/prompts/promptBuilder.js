@@ -32,7 +32,15 @@ function buildGenerationPrompt({ idea, genre, tone, characters, keywords, style,
   if (characters) sections.push(`**Characters:** ${characters}`);
   if (keywords) sections.push(`**Key Themes/Keywords:** ${keywords}`);
   if (wordLimit) {
-    sections.push(`**Word Limit Constraint:** EXACTLY ${wordLimit} words. IMPORTANT: You must write a complete response that strictly satisfies this word limit. Adjust your pacing to conclude naturally shortly before reaching this limit.`);
+    sections.push(
+      `**EXACT WORD COUNT REQUIREMENT:** You MUST generate a response that is as close as possible to ${wordLimit} words.`,
+      `- Do not go below ${Math.floor(wordLimit * 0.9)} words.`,
+      `- Do not exceed ${Math.ceil(wordLimit * 1.1)} words.`,
+      `- Use descriptive detail and pacing to meet this length naturally.`,
+      `- If you are running short, expand on descriptions or internal monologues.`,
+      `- If you are running long, condense the narrative or arguments without sacrificing quality.`,
+      ''
+    );
   }
   if (targetAudience) sections.push(`**Target Audience:** ${targetAudience}`);
 
@@ -42,10 +50,11 @@ function buildGenerationPrompt({ idea, genre, tone, characters, keywords, style,
 
   sections.push(
     '',
-    '**Quality Standards:**',
+    '**Quality Standards & Structural Constraints:**',
     `- Incorporate ${template.elements}`,
     '- Use strong, precise vocabulary — avoid clichés',
     '- Ensure clear structure with proper paragraphing',
+    `- If word limit is set (${wordLimit || 'none'}), ensure the density of information matches the requested length.`,
     '- Create an engaging opening that hooks the reader',
     '- Deliver a satisfying, meaningful conclusion',
     '- Maintain consistent voice and tone throughout',

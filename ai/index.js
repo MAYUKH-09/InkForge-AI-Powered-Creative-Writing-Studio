@@ -107,8 +107,9 @@ async function generate(params) {
     } else {
       // Determine maxTokens based on user word limit request to generate faster results
       const requestedWords = params.wordLimit ? parseInt(params.wordLimit, 10) : 500;
-      // ~2.5 tokens per word + 500 buffer to prevent hard cutoffs
-      const maxTokens = Math.min(Math.ceil(requestedWords * 2.5) + 500, 8000);
+      // ~4 tokens per word for rich creative content + 1000 buffer to prevent hard cutoffs
+      // Gemini can handle vast context, so we increase the cap safely
+      const maxTokens = Math.min(Math.ceil(requestedWords * 4) + 1000, 20000);
 
       result = await provider.generate(
         SYSTEM_PROMPTS.generation,
