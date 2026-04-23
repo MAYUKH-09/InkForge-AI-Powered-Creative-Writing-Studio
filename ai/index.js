@@ -96,24 +96,36 @@ async function generate(params) {
 
   let result;
 
-  if (provider instanceof DemoProvider) {
-    // Demo provider needs the original params, not the prompt
-    result = await provider.generate(
+  try {
+    if (provider instanceof DemoProvider) {
+      // Demo provider needs the original params, not the prompt
+      result = await provider.generate(
+        SYSTEM_PROMPTS.generation,
+        prompt,
+        { inputParams: params }
+      );
+    } else {
+      // Determine maxTokens based on user word limit request to generate faster results
+      const requestedWords = params.wordLimit ? parseInt(params.wordLimit, 10) : 500;
+      // ~2.5 tokens per word + 500 buffer to prevent hard cutoffs
+      const maxTokens = Math.min(Math.ceil(requestedWords * 2.5) + 500, 8000);
+
+      result = await provider.generate(
+        SYSTEM_PROMPTS.generation,
+        prompt,
+        { temperature: 0.7, maxTokens }
+      );
+    }
+  } catch (error) {
+    console.error('[AI Index] Primary provider failed, falling back to Demo Engine:', error.message);
+    const fallback = new DemoProvider();
+    result = await fallback.generate(
       SYSTEM_PROMPTS.generation,
       prompt,
       { inputParams: params }
     );
-  } else {
-    // Determine maxTokens based on user word limit request to generate faster results
-    const requestedWords = params.wordLimit ? parseInt(params.wordLimit, 10) : 500;
-    // ~2.5 tokens per word + 500 buffer to prevent hard cutoffs
-    const maxTokens = Math.min(Math.ceil(requestedWords * 2.5) + 500, 8000);
-
-    result = await provider.generate(
-      SYSTEM_PROMPTS.generation,
-      prompt,
-      { temperature: 0.7, maxTokens }
-    );
+    // Overwrite metadata to show it was a fallback
+    result.model = 'inkforge-demo-engine (quota-fallback)';
   }
 
   // Parse Title and Content from result
