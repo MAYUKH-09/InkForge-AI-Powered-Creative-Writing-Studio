@@ -116,11 +116,33 @@ async function generate(params) {
     );
   }
 
-  const analysis = analyzeContent(result.content);
+  // Parse Title and Content from result
+  let content = result.content;
+  let title = params.idea || 'Untitled Document';
+
+  if (content.includes('TITLE:') && content.includes('CONTENT:')) {
+    const titleMatch = content.match(/TITLE:\s*(.*?)(?:\n|$|\n\n)/i);
+    const contentMatch = content.match(/CONTENT:\s*([\s\S]*)$/i);
+    
+    if (titleMatch && titleMatch[1]) {
+      title = titleMatch[1].trim().replace(/^\[|\]$/g, '');
+    }
+    if (contentMatch && contentMatch[1]) {
+      content = contentMatch[1].trim();
+    }
+  } else if (content.startsWith('# ')) {
+    // Fallback for simple markdown titles
+    const lines = content.split('\n');
+    title = lines[0].replace('# ', '').trim();
+    content = lines.slice(1).join('\n').trim();
+  }
+
+  const analysis = analyzeContent(content);
   const info = provider.getInfo();
 
   const response = {
-    content: result.content,
+    title,
+    content,
     metadata: {
       model: result.model,
       mode: info.mode,

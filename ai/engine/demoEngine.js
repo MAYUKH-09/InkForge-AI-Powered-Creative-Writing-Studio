@@ -29,8 +29,8 @@ const OPENINGS = {
     (p) => `FADE IN:\n\nEXT. ${p.setting.toUpperCase()} - ${p.timeOfDay.toUpperCase()}\n\nThe camera pans across a ${p.weather} ${p.landscape}. We hear the distant sound of ${p.ambientSound}.\n\n${p.protagonist.toUpperCase()} stands at the edge, gazing into the distance. A moment of stillness before the storm.`,
   ],
   article: [
-    (p) => `# ${p.headline}\n\n${p.hookQuestion} According to recent developments, ${p.theme} is reshaping the way we think about ${p.relatedTopic}. Here's what you need to know.`,
-    (p) => `# ${p.headline}\n\nThe conversation around ${p.theme} has reached a tipping point. Experts are divided, the data is compelling, and the implications are far-reaching.`,
+    (p) => `${p.hookQuestion} According to recent developments, ${p.theme} is reshaping the way we think about ${p.relatedTopic}. Here's what you need to know.`,
+    (p) => `The conversation around ${p.theme} has reached a tipping point. Experts are divided, the data is compelling, and the implications are far-reaching.`,
   ],
 };
 
@@ -178,15 +178,10 @@ function generate(input) {
   const middle = pick(middles)(params);
   const ending = pick(endings)(params);
 
-  let content = opening + middle + ending;
+  const body = opening + middle + ending;
+  const title = generateTitle(input, params, type);
 
-  // Add a title
-  if (type !== 'article') {
-    const title = generateTitle(input, params, type);
-    content = `# ${title}\n\n${content}`;
-  }
-
-  return content;
+  return `TITLE: ${title}\nCONTENT: ${body}`;
 }
 
 function generateTitle(input, params, type) {

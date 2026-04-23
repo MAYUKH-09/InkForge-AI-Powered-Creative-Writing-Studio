@@ -35,7 +35,7 @@ export function AppProvider({ children }) {
       setContent(data.content);
       setAnalysis(data.analysis);
       setMetadata(data.metadata);
-      setDocumentTitle(formData.idea || 'InkForge Document');
+      setDocumentTitle(data.title || formData.idea || 'InkForge Document');
       setIsGenerated(true);
       setActivePanel('editor');
       addToast('Content generated successfully!', 'success');

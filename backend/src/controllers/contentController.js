@@ -36,9 +36,10 @@ async function generateContent(req, res, next) {
       `via ${result.metadata.provider}`,
       result.fromCache ? '(cached)' : ''
     );
-
+    
     res.json({
       success: true,
+      title: result.title || idea.substring(0, 50),
       content: result.content,
       metadata: result.metadata,
       analysis: result.analysis,

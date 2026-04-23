@@ -50,7 +50,14 @@ function buildGenerationPrompt({ idea, genre, tone, characters, keywords, style,
     '- Deliver a satisfying, meaningful conclusion',
     '- Maintain consistent voice and tone throughout',
     '',
-    `Generate the complete ${type}. Make it substantial, polished, and publication-ready. Do not include any meta-commentary — output only the ${type} itself.`
+    `Generate the complete ${type}. Make it substantial, polished, and publication-ready.`,
+    '',
+    '**Output Format Requirements:**',
+    'Your output MUST follow this structure exactly with the clear delimiters:',
+    'TITLE: [A creative, catchy title based on the content]',
+    'CONTENT: [The full body of the generated content]',
+    '',
+    `Do not include any meta-commentary — output only the title and the ${type} body as specified.`
   );
 
   return sections.join('\n');
