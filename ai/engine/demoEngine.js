@@ -38,9 +38,12 @@ const MIDDLES = {
   story: [
     (p) => `\n\nAs ${p.protagonist} ventured deeper into the ${p.setting}, the reality of the situation began to crystallize. The ${p.object} wasn't just an artifact — it was a compass, pointing toward something ${p.protagonist} had spent a lifetime avoiding: the truth about ${p.possessive} own past.\n\n"${p.dialogue1}," ${p.protagonist} murmured, turning the ${p.object} over in ${p.possessive} hands. The inscriptions glowed faintly, responding to ${p.possessive} touch like a living thing.\n\nThe ${p.setting} shifted around ${p.pronoun}. Walls that had seemed solid moments ago now rippled like water, revealing corridors that shouldn't exist. Each one whispered promises — of power, of knowledge, of the ${p.abstractNoun} that had been stolen from ${p.pronoun} long ago.\n\n${p.protagonist} chose the corridor bathed in ${p.lightType}. Not because it seemed safest, but because the air there carried a familiar fragrance — ${p.sensory} — the scent of home, of memory, of everything ${p.pronoun} had been fighting to protect.\n\nThe passage narrowed. Then widened. And there, in a chamber vast enough to hold the sky, ${p.protagonist} found ${p.discovery}.`,
     (p) => `\n\nHours passed like sand through a broken hourglass — sometimes slow, sometimes in torrents. ${p.protagonist} lost track of the ${p.timeOfDay}s that blurred together, each one bringing new revelations and deeper questions.\n\nThe ${p.secondaryCharacter} appeared without warning, stepping from the shadows as if ${p.pronoun2} had been woven from them. "${p.dialogue2}," ${p.secondaryCharacter} said, ${p.possessive2} voice carrying the weight of centuries.\n\n${p.protagonist} studied ${p.pronoun2} carefully. Trust was a currency too expensive to spend carelessly in this ${p.setting}. But something in ${p.secondaryCharacter}'s eyes — a flicker of ${p.emotion}, perhaps, or the ghost of shared understanding — made ${p.protagonist} lower ${p.possessive} guard.\n\nTogether, they navigated the labyrinth of ${p.abstractNoun}. Each turn revealed murals painted in pigments that seemed to bleed with life: scenes of ${p.historical}, of triumphs and catastrophes, of a world that existed before memory had a name.\n\n"We're close," ${p.secondaryCharacter} whispered. And for the first time, ${p.protagonist} believed it.`,
+    (p) => `\n\nThe silence of the ${p.setting} was punctuated only by ${p.ambientSound}. ${p.protagonist} felt the weight of ${p.abstractNoun} pulling at ${p.possessive} resolve. It was here, amidst the ${p.weather} ruins, that ${p.pronoun} realized that the ${p.object} was merely a reflection of ${p.possessive} internal struggle.\n\nSuddenly, the air filled with the scent of ${p.sensory}. A door, hidden behind a tapestry of ${p.naturalElement}, creaked open to reveal a staircase descending into ${p.lightType}. ${p.protagonist} took a deep breath, clutching the ${p.object} tight.\n\nAs ${p.pronoun} descended, the walls seemed to whisper the names of ${p.historical}. It was a legacy of ${p.emotion}, a lineage of those who had sought the ${p.abstractNoun2} only to find it within themselves. The final step brought ${p.pronoun} to a pedestal orbed in ${p.celestialBody}light, where the ${p.discovery} awaited.`,
+    (p) => `\n\nConflict was inevitable. The ${p.secondaryCharacter} stood across from ${p.protagonist}, ${p.possessive2} eyes reflecting the ${p.lightType} of the flickering ${p.celestialBody}. "${p.dialogue1}," ${p.protagonist} shouted over the rising ${p.ambientSound}. The world seemed to pause as they stood on the precipice of ${p.abstractNoun}.\n\nWith a swift motion, ${p.protagonist} raised the ${p.object}. It hummed with the frequency of ${p.naturalElement}, a low vibration that resonated in ${p.possessive} very bones. The ${p.landscape} seemed to shift in response, the ${p.weather} sky cracking open to reveal a glimpse of the ${p.abstractNoun2} that lay beyond.\n\nThey moved as one, a dance of ${p.emotion} and calculation. Every strike, every dodge was a testament to the ${p.abstractNoun} they had both sacrificed so much for. In the end, it wasn't strength that won, but the ${p.discovery} that they were both seeking the same thing.`,
   ],
   essay: [
     (p) => `\n\n## The Foundation\n\nTo understand ${p.theme}, we must first examine its roots. The concept emerged from ${p.origin}, evolving through centuries of thought, debate, and transformation.\n\nScholars have long argued that ${p.theme} represents more than a simple phenomenon — it is a mirror reflecting our collective aspirations and anxieties. As one prominent thinker noted, "${p.quote}"\n\nThe evidence supports a nuanced view. On one hand, ${p.argument1}. On the other, ${p.counterArgument}. This tension is not a weakness in our understanding but rather its defining strength.\n\n## The Modern Landscape\n\nToday, ${p.theme} manifests in ways that would astonish its earliest proponents. ${p.modernExample}\n\nThe data tells a compelling story: ${p.statistic}. These numbers represent not just trends but transformations — fundamental shifts in how we ${p.humanActivity}.\n\nCritics may point to ${p.criticism}, and they raise valid concerns. However, a closer examination reveals that ${p.rebuttal}. The path forward lies not in choosing sides but in synthesizing these perspectives into a more complete understanding.`,
+    (p) => `\n\n## Analytical Perspectives\n\nWhen we look at the broader implications of ${p.theme}, we see a ${p.landscape} of shifting priorities. The ${p.abstractNoun} inherent in this field is not merely academic; it has practical consequences for ${p.relatedTopic}.\n\nA recent ${p.origin} study highlighted that ${p.statistic} is just the beginning. The real story lies in ${p.argument1}, which challenges our previous ${p.abstractNoun2}. This paradigm shift is what ${p.recommendation} is all about.\n\nFurthermore, the interplay between ${p.naturalElement} and ${p.theme} suggests that we are entering an era of ${p.emotion}. This isn't just about ${p.humanActivity}; it's about the very core of our ${p.landscape}.`,
   ],
   poem: [
     (p) => `\nAnd in the ${p.timeOfDay}, when ${p.naturalElement}\nfolds itself into origami ${p.creature}s,\nI trace the outline of your ${p.abstractNoun}\nacross the ${p.landscape} of my palms.\n\nWe were ${p.gemstone}s once,\npolished by the ${p.naturalElement} of ${p.emotion},\neach facet catching ${p.celestialBody}light\nuntil we learned to shine\nwithout permission.\n\nNow the ${p.season} arrives\nwith its cargo of ${p.sensoryPlural},\nand I am fluent\nin the language of ${p.abstractNoun2} —\n\neach word a ${p.creature}\nlanding on the ${p.naturalElement}\nof everything I meant to say.`,
@@ -50,6 +53,7 @@ const MIDDLES = {
   ],
   article: [
     (p) => `\n\n## Understanding the Shift\n\nThe transformation didn't happen overnight. For years, ${p.theme} operated on the fringes, noticed only by specialists and early adopters. But a series of catalysts — ${p.modernExample} — propelled it into the mainstream.\n\n"${p.quote}" explains one industry leader, capturing the sentiment shared by many professionals in the field.\n\nThe implications are significant. ${p.argument1} Meanwhile, ${p.statistic} — a figure that underscores the urgency of the conversation.\n\n## What This Means For You\n\n${p.practicalAdvice}\n\nExperts recommend focusing on ${p.recommendation}. While the landscape continues to evolve, one thing remains clear: ${p.keyTakeaway}.`,
+    (p) => `\n\n## The Technical Frontier\n\nAs we delve deeper into ${p.theme}, we discover that ${p.origin} plays a much larger role than previously thought. The ${p.naturalElement} of the industry is shifting towards ${p.landscape}, driven by ${p.statistic}.\n\n"We are seeing a ${p.emotion} in how ${p.humanActivity} is approached," says one researcher. This ${p.abstractNoun} is what will define the next generation of ${p.relatedTopic}.\n\nLooking at the ${p.modernExample}, it's clear that ${p.keyTakeaway} is no longer optional. It is the bridge between ${p.abstractNoun2} and the practical reality of our ${p.landscape}.`,
   ],
 };
 
@@ -175,10 +179,20 @@ function generate(input) {
   const endings = ENDINGS[type] || ENDINGS.story;
 
   const opening = pick(openings)(params);
-  const middle = pick(middles)(params);
-  const ending = pick(endings)(params);
-
-  const body = opening + middle + ending;
+  
+  // Smart middle generation based on word limit
+  let bodySections = [];
+  const requestedWords = input.wordLimit ? parseInt(input.wordLimit, 10) : 300;
+  
+  // Each middle section is roughly 150-200 words
+  const sectionsNeeded = Math.max(1, Math.min(6, Math.ceil(requestedWords / 150)));
+  
+  for (let i = 0; i < sectionsNeeded; i++) {
+    // Try to pick unique middles if possible, otherwise repeat
+    bodySections.push(pick(middles)(params));
+  }
+  
+  const body = opening + bodySections.join('\n\n') + pick(endings)(params);
   const title = generateTitle(input, params, type);
 
   return `TITLE: ${title}\nCONTENT: ${body}`;

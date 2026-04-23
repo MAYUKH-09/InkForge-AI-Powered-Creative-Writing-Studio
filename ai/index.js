@@ -95,20 +95,17 @@ async function generate(params) {
   const prompt = buildGenerationPrompt(params);
 
   let result;
+  let activeMode = provider.getInfo().mode;
 
   try {
     if (provider instanceof DemoProvider) {
-      // Demo provider needs the original params, not the prompt
       result = await provider.generate(
         SYSTEM_PROMPTS.generation,
         prompt,
         { inputParams: params }
       );
     } else {
-      // Determine maxTokens based on user word limit request to generate faster results
       const requestedWords = params.wordLimit ? parseInt(params.wordLimit, 10) : 500;
-      // ~4 tokens per word for rich creative content + 1000 buffer to prevent hard cutoffs
-      // Gemini can handle vast context, so we increase the cap safely
       const maxTokens = Math.min(Math.ceil(requestedWords * 4) + 1000, 20000);
 
       result = await provider.generate(
@@ -120,13 +117,14 @@ async function generate(params) {
   } catch (error) {
     console.error('[AI Index] Primary provider failed, falling back to Demo Engine:', error.message);
     const fallback = new DemoProvider();
+    activeMode = 'demo';
     result = await fallback.generate(
       SYSTEM_PROMPTS.generation,
       prompt,
       { inputParams: params }
     );
-    // Overwrite metadata to show it was a fallback
     result.model = 'inkforge-demo-engine (quota-fallback)';
+    result.content += '\n\n---\n*Note: The primary AI engine is currently experiencing high demand. This content was generated using our high-quality local fallback engine to ensure no service interruption.*';
   }
 
   // Parse Title and Content from result
@@ -144,21 +142,20 @@ async function generate(params) {
       content = contentMatch[1].trim();
     }
   } else if (content.startsWith('# ')) {
-    // Fallback for simple markdown titles
     const lines = content.split('\n');
     title = lines[0].replace('# ', '').trim();
     content = lines.slice(1).join('\n').trim();
   }
 
   const analysis = analyzeContent(content);
-  const info = provider.getInfo();
+  const info = activeMode === 'demo' ? { name: 'Demo Engine' } : provider.getInfo();
 
   const response = {
     title,
     content,
     metadata: {
       model: result.model,
-      mode: info.mode,
+      mode: activeMode,
       tokens: result.tokens,
       provider: info.name,
     },
