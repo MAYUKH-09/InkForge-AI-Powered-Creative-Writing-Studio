@@ -1,6 +1,9 @@
 
 import React, { createContext, useContext, useState } from 'react';
+import { generateWithGemini, refineWithGemini } from '../services/aiService';
+
 const AppContext = createContext({});
+
 export function AppProvider({ children }) {
   const [content, setContent] = useState('');
   const [analysis, setAnalysis] = useState(null);
@@ -20,22 +23,64 @@ export function AppProvider({ children }) {
     setTimeout(() => removeToast(id), 5000);
   };
 
+  /**
+   * Helper to perform local analysis of content
+   */
+  const performAnalysis = async (text) => {
+    try {
+      const res = await fetch('/api/v1/content/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: text })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.analysis;
+      }
+    } catch (e) {
+      console.warn('Analytics failure', e);
+    }
+    return null;
+  };
+
   const handleGenerate = async (formData) => {
     setLoading(true);
     try {
       const payload = { ...formData, style: selectedStyle };
-      const res = await fetch('/api/generate-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message || 'Generation failed');
+      let result;
+      let usedMetadata = { model: 'gemini-flash-latest', mode: 'gemini', provider: 'Gemini' };
+
+      try {
+        // Step 1: Attempt direct frontend generation (recommended by skill)
+        const genResult = await generateWithGemini(payload);
+        result = genResult;
+      } catch (aiErr) {
+        console.warn('Frontend AI failed, falling back to backend:', aiErr.message);
+        
+        // Step 2: Fallback to backend (which handles Demo Engine)
+        const res = await fetch('/api/generate-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Generation failed');
+        
+        result = { title: data.title, content: data.content };
+        usedMetadata = data.metadata;
+        setAnalysis(data.analysis);
+      }
       
-      setContent(data.content);
-      setAnalysis(data.analysis);
-      setMetadata(data.metadata);
-      setDocumentTitle(data.title || formData.idea || 'InkForge Document');
+      setContent(result.content);
+      setDocumentTitle(result.title || formData.idea || 'InkForge Document');
+      setMetadata(usedMetadata);
+      
+      // If we used the frontend, we need to manually trigger analysis
+      if (usedMetadata.mode === 'gemini') {
+        const ana = await performAnalysis(result.content);
+        if (ana) setAnalysis(ana);
+      }
+
       setIsGenerated(true);
       setActivePanel('editor');
       addToast('Content generated successfully!', 'success');
@@ -50,16 +95,29 @@ export function AppProvider({ children }) {
     if (!content) return;
     setLoading(true);
     try {
-      const res = await fetch('/api/refine-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, instructions })
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message || 'Refinement failed');
+      let result;
+      try {
+        // Attempt frontend refinement
+        result = await refineWithGemini(content, instructions);
+      } catch (aiErr) {
+        console.warn('Frontend refinement failed, falling back to backend:', aiErr.message);
+        const res = await fetch('/api/refine-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, instructions })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Refinement failed');
+        result = { content: data.content };
+        setAnalysis(data.analysis);
+      }
       
-      setContent(data.content);
-      setAnalysis(data.analysis);
+      setContent(result.content);
+      
+      // Secondary analysis if needed
+      const ana = await performAnalysis(result.content);
+      if (ana) setAnalysis(ana);
+
       addToast('Content refined successfully!', 'success');
     } catch (err) {
       addToast(err.message, 'error');

@@ -73,4 +73,20 @@ async function refineContent(req, res, next) {
   }
 }
 
-module.exports = { generateContent, refineContent };
+/**
+ * Handle direct content analysis.
+ */
+async function analyzeOnly(req, res, next) {
+  try {
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ success: false, message: 'Content required' });
+    
+    // Using the same analyzer logic from the AI package
+    const result = ai.analyze(content);
+    res.json({ success: true, analysis: result });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { generateContent, refineContent, analyzeOnly };

@@ -11,7 +11,7 @@ class GeminiProvider extends BaseProvider {
     super('Gemini');
     this._client = null;
     this._apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY;
-    this._model = config.model || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    this._model = config.model || process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest';
   }
 
   /**
@@ -64,44 +64,43 @@ class GeminiProvider extends BaseProvider {
           tokens: response.usageMetadata?.totalTokenCount || 0,
         };
       } catch (error) {
-        const isQuotaError = error.message && (error.message.includes('429') || error.message.includes('ResourceExhausted'));
-        const isLimitZero = isQuotaError && error.message.includes('limit: 0');
+        const errorMessage = error.message || '';
+        const isQuotaError = errorMessage.includes('429') || errorMessage.includes('ResourceExhausted');
+        const isLimitZero = isQuotaError && errorMessage.includes('limit: 0');
+        const isNotFoundError = errorMessage.includes('404') || errorMessage.includes('not found');
         
-        const isRetryableError = !isLimitZero && error.message && (
-          error.message.includes('503') || 
-          error.message.includes('UNAVAILABLE') || 
-          isQuotaError
+        const isRetryableError = !isLimitZero && (
+          errorMessage.includes('503') || 
+          errorMessage.includes('UNAVAILABLE') || 
+          isQuotaError ||
+          isNotFoundError // Handle 404 as fallback candidate
         );
 
         if (isRetryableError) {
           retries--;
-          console.warn(`[GeminiProvider] Warning with ${currentModel} at ${delay}ms... (${retries} retries left) - ${error.message.split('\n')[0].substring(0, 80)}`);
+          console.warn(`[GeminiProvider] Warning with ${currentModel} at ${delay}ms... (${retries} retries left) - ${errorMessage.split('\n')[0].substring(0, 80)}`);
           
           if (retries === 0) {
              throw error; 
           }
 
-          // More aggressive fallback for Quota errors
-          if (isQuotaError && retries <= 3) {
-            if (currentModel === 'gemini-1.5-flash') {
-              console.warn(`[GeminiProvider] 429 on Flash. Attempting gemini-1.5-pro fallback...`);
-              currentModel = 'gemini-1.5-pro';
-            } else if (currentModel === 'gemini-1.5-pro') {
-              console.warn(`[GeminiProvider] 429 on Pro. Trying gemini-2.0-flash-exp...`);
+          // Aggressive fallback for Quota OR Not Found errors
+          if ((isQuotaError && retries <= 3) || isNotFoundError) {
+            if (currentModel.includes('flash')) {
+              console.warn(`[GeminiProvider] Switching from Flash to Pro fallback...`);
+              currentModel = 'gemini-1.5-pro-latest';
+            } else if (currentModel.includes('pro')) {
+              console.warn(`[GeminiProvider] Pro failed, trying experimental flash-2.0...`);
               currentModel = 'gemini-2.0-flash-exp';
             }
           }
 
-          await new Promise(resolve => setTimeout(resolve, delay));
-          delay = Math.min(delay * 2, 15000); // Exponential backoff, max 15s
-        } else {
-          // Instantly fallback if we hit a hard limit 0
-          if (isLimitZero && currentModel === 'gemini-1.5-flash') {
-             console.warn(`[GeminiProvider] Hit limit 0 on Flash, instantly falling back to Pro.`);
-             currentModel = 'gemini-1.5-pro';
-             retries--;
-             continue;
+          // Don't wait for 404 errors, try next model immediately
+          if (!isNotFoundError) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay = Math.min(delay * 2, 15000); 
           }
+        } else {
           throw error;
         }
       }
