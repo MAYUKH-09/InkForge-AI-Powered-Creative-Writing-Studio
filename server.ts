@@ -1,6 +1,7 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
+import 'dotenv/config';
 
 // Import the commonjs backend app
 import backendApp from './backend/src/app.js';
