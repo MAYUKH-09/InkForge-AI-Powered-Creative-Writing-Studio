@@ -15,9 +15,12 @@
   --bg-primary: #06060f;
   --bg-secondary: #0c0c1d;
   --bg-tertiary: #13132b;
-  --bg-input: rgba(0, 0, 0, 0.2);
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --bg-glass-hover: rgba(255, 255, 255, 0.06);
+  --bg-input: rgba(0, 0, 0, 0.3);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-deep: rgba(255, 255, 255, 0.08);
+  --bg-glass-hover: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(20px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
 
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-medium: rgba(255, 255, 255, 0.12);
@@ -76,8 +79,10 @@ body {
   font-size: 0.85rem;
   cursor: pointer;
   transition: all var(--transition-base);
-  border: 1px solid var(--border-medium);
+  border: var(--glass-border);
   background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-primary);
 }
 
@@ -114,7 +119,9 @@ body {
   width: 100%;
   padding: 10px 14px;
   background: var(--bg-input);
-  border: 1px solid var(--border-subtle);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-sans);
